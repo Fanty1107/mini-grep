@@ -1,0 +1,29 @@
+use std::env;
+
+pub struct Config {
+    pub query: String,
+    pub file_path: String,
+    pub ignore_case: bool,
+    pub highlight_case: bool,
+}
+impl Config {
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("didnt get query string"),
+        };
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("didnt get file path string"),
+        };
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let highlight_case = env::var("HIGHLIGHT_CASE").is_ok();
+        Ok(Config {
+            query,
+            file_path,
+            ignore_case,
+            highlight_case,
+        })
+    }
+}
